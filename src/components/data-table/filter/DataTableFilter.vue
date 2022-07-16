@@ -19,10 +19,33 @@ export default {
     };
   },
   computed: {},
-  mounted() {},
+  mounted() {
+    this.getFilterState();
+    this.onSearch();
+  },
   methods: {
+    setFilterState() {
+      window.history.pushState(
+        null,
+        document.title,
+        `${window.location.pathname}?search=${this.search}`
+      );
+    },
+    getFilterState() {
+      const windowData = Object.fromEntries(
+        new URL(window.location).searchParams.entries()
+      );
+
+      const VALID_KEYS = ["search"];
+      VALID_KEYS.forEach((key) => {
+        if (windowData[key]) {
+          this[key] = windowData[key];
+        }
+      });
+    },
     onSearch() {
       if (this.search) {
+        this.setFilterState();
         this.$emit("search:change", this.search);
       }
     },
