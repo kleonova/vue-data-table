@@ -1,5 +1,8 @@
 <template>
-  <tr>
+  <tr
+    class="data-table__row"
+    :class="{ 'data-table__row--editable': editMode }"
+  >
     <td v-for="column in columns" :key="column.name">
       <template v-if="editMode">
         <input type="text" v-model="rowData[column.name]" />
@@ -72,4 +75,10 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss">
+.data-table__row--editable {
+  td {
+    background-color: aquamarine;
+  }
+}
+</style>
