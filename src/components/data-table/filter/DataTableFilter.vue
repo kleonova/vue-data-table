@@ -1,15 +1,36 @@
 <template>
   <div class="data-table-filter">
     <div>
-      <input type="text" placeholder="Поиск..." />
+      <input v-model="search" type="text" placeholder="Поиск..." />
     </div>
-    <button>Найти</button>
+    <button @click="onSearch">Найти</button>
+    <button v-if="search" @click="onClear">Очистить</button>
   </div>
 </template>
 
 <script>
 export default {
   name: "DataTableFilter",
+  props: {},
+  emits: ["search:change", "search:clear"],
+  data() {
+    return {
+      search: null,
+    };
+  },
+  computed: {},
+  mounted() {},
+  methods: {
+    onSearch() {
+      if (this.search) {
+        this.$emit("search:change", this.search);
+      }
+    },
+    onClear() {
+      this.search = null;
+      this.$emit("search:clear");
+    },
+  },
 };
 </script>
 

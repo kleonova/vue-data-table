@@ -1,6 +1,9 @@
 <template>
   <div class="data-table-wrapper">
-    <data-table-filter />
+    <data-table-filter
+      @search:change="onSearchChange"
+      @search:clear="onSearchClear"
+    />
 
     <table :id="tableId" class="data-table">
       <thead>
@@ -17,7 +20,7 @@
       </thead>
 
       <tbody>
-        <tr v-for="row in rows" :key="row['id']">
+        <tr v-for="row in filterRows" :key="row['id']">
           <td v-for="column in columns" :key="column.name">
             {{ row[column.name] }}
           </td>
@@ -76,9 +79,21 @@ export default {
 
       /* sort */
       sort: this.defaultSort,
+
+      /* filter */
+      filter: null,
     };
   },
-  computed: {},
+  computed: {
+    filterRows() {
+      if (!this.filter) return this.rows;
+
+      return this.rows.filter((item) => {
+        // Object.values(item).forEach((value) => value.includes(searchValue));
+        return item.name.toLowerCase().includes(this.filter);
+      });
+    },
+  },
   mounted() {
     /* sort */
     this.getLocalStorageSort();
@@ -135,6 +150,18 @@ export default {
         return compareByOrder(a[column], b[column], order);
       };
       this.rows.sort(sortFunction);
+    },
+
+    /* filter */
+    onSearchChange(searchValue) {
+      if (this.serverRender) {
+        console.log("get new data");
+      } else {
+        this.filter = searchValue.toLowerCase();
+      }
+    },
+    onSearchClear() {
+      this.filter = "";
     },
   },
 };
