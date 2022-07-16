@@ -28,7 +28,9 @@ export default {
       window.history.pushState(
         null,
         document.title,
-        `${window.location.pathname}?search=${this.search}`
+        this.search
+          ? `${window.location.pathname}?search=${this.search}`
+          : `${window.location.pathname}`
       );
     },
     getFilterState() {
@@ -51,6 +53,7 @@ export default {
     },
     onClear() {
       this.search = null;
+      this.setFilterState();
       this.$emit("search:clear");
     },
   },
