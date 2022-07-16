@@ -1,6 +1,10 @@
 <template>
   <div v-if="isLoading">
-    <data-table :table-constructor="tableConstructor" :table-data="cats" />
+    <data-table
+      :table-id="tableId"
+      :table-constructor="tableConstructor"
+      :table-data="cats"
+    />
   </div>
 </template>
 
@@ -16,6 +20,7 @@ export default {
   data() {
     return {
       isLoading: false,
+      tableId: "table-cats",
       tableConstructor: [
         {
           name: "id",
@@ -68,6 +73,11 @@ export default {
           hide: false,
         },
       ],
+      defaultSort: {
+        column: "id",
+        order: "asc",
+      },
+      defaultFilter: {},
       cats: [],
     };
   },
