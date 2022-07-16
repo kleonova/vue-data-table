@@ -16,15 +16,33 @@
               @sort:change="onChangeSort"
             />
           </th>
+
+          <th v-if="editable">
+            <button v-if="!showFormAdd" @click="showFormAdd = true">add</button>
+          </th>
         </tr>
       </thead>
 
       <tbody>
-        <tr v-for="row in filterRows" :key="row['id']">
-          <td v-for="column in columns" :key="column.name">
-            {{ row[column.name] }}
-          </td>
-        </tr>
+        <data-table-row
+          v-if="showFormAdd"
+          :columns="columns"
+          :row="newItem"
+          editable
+          add-mode
+          @row:cancel="showFormAdd = false"
+          @row:save="onCreateRow"
+        />
+
+        <data-table-row
+          v-for="row in filterRows"
+          :key="row['id']"
+          :row="row"
+          :columns="columns"
+          :editable="editable"
+          @row:delete="onDeleteRow(row.id)"
+          @row:save="onUpdateRow"
+        />
       </tbody>
     </table>
   </div>
@@ -34,12 +52,14 @@
 import DataTableFilter from "@/components/data-table/filter/DataTableFilter";
 import DataTableHeaderCell from "@/components/data-table/table/headerCells/DataTableHeaderCell";
 import { compareByOrder } from "@/utils/sortArray";
+import DataTableRow from "@/components/data-table/table/rows/DataTableRow";
 
 export default {
   name: "DataTable",
   components: {
     DataTableFilter,
     DataTableHeaderCell,
+    DataTableRow,
   },
   props: {
     tableId: {
@@ -69,8 +89,12 @@ export default {
         order: "asc",
       }),
     },
+    editable: {
+      type: Boolean,
+      default: false,
+    },
   },
-  emits: [],
+  emits: ["row:create", "row:update", "row:delete"],
   data() {
     return {
       /* init */
@@ -82,6 +106,10 @@ export default {
 
       /* filter */
       filter: null,
+
+      /* crud */
+      showFormAdd: false,
+      newItem: {},
     };
   },
   computed: {
@@ -99,19 +127,24 @@ export default {
     this.getLocalStorageSort();
 
     /* init */
-    this.columns = this.tableConstructor.filter(({ hide }) => {
-      return !hide;
-    });
-
-    if (this.dataUrl) {
-      console.log("todo get data with sort");
-    } else {
-      // sortData
-      this.rows = this.tableData;
-      this.localSortData();
-    }
+    this.constructTable();
+    this.initNewItem();
   },
   methods: {
+    /* */
+    constructTable() {
+      this.columns = this.tableConstructor.filter(({ hide }) => {
+        return !hide;
+      });
+
+      if (this.dataUrl) {
+        console.log("todo get data with sort");
+      } else {
+        // sortData
+        this.rows = this.tableData;
+        this.localSortData();
+      }
+    },
     /* for sort */
     getLocalStorageSort() {
       const nameLocalStorage = this.tableId + "-sort";
@@ -152,7 +185,7 @@ export default {
       this.rows.sort(sortFunction);
     },
 
-    /* filter */
+    /* for filter */
     onSearchChange(searchValue) {
       if (this.serverRender) {
         console.log("get new data");
@@ -163,11 +196,43 @@ export default {
     onSearchClear() {
       this.filter = "";
     },
+
+    /* for crud  */
+    initNewItem() {
+      this.tableConstructor.forEach((prop) => {
+        this.newItem[prop.name] = "";
+      });
+    },
+    onCreateRow(newData) {
+      this.$emit("row:create", newData);
+      this.rows.unshift(newData);
+      this.showFormAdd = false;
+      this.newItem = {};
+    },
+    onUpdateRow(newData) {
+      this.$emit("row:update", newData);
+      let rowItem = this.rows.find(({ id }) => {
+        return id === newData.id;
+      });
+      if (!this.serverRender) {
+        if (rowItem) {
+          rowItem = { ...newData };
+        }
+      }
+    },
+    onDeleteRow(rowId) {
+      this.$emit("row:delete", rowId);
+      if (!this.serverRender) {
+        this.rows = this.rows.filter(({ id }) => {
+          return id !== rowId;
+        });
+      }
+    },
   },
 };
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
 .data-table-wrapper {
   display: flex;
   flex-direction: column;
@@ -176,10 +241,13 @@ export default {
 .data-table {
   font-size: 13px;
   text-align: left;
-}
 
-th,
-td {
-  border: 1px solid;
+  th,
+  td {
+    border: 1px solid;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
 }
 </style>

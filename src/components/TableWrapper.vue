@@ -4,6 +4,7 @@
       :table-id="tableId"
       :table-constructor="tableConstructor"
       :table-data="cats"
+      editable
     />
   </div>
 </template>
@@ -35,7 +36,7 @@ export default {
         {
           name: "temperament",
           label: "temperament",
-          hide: false,
+          hide: true,
         },
         {
           name: "origin",
@@ -70,7 +71,7 @@ export default {
         {
           name: "alt_names",
           label: "alt_names",
-          hide: false,
+          hide: true,
         },
       ],
       defaultSort: {
