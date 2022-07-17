@@ -92,6 +92,7 @@ import DataTableHeaderCell from "@/components/data-table/table/headerCells/DataT
 import DataTableRow from "@/components/data-table/table/rows/DataTableRow";
 import IconPlus from "@/assets/icons/IconPlus";
 import { compareByOrder } from "@/utils/sortArray";
+import axios from "axios";
 
 export default {
   name: "DataTable",
@@ -186,26 +187,37 @@ export default {
     },
   },
   mounted() {
-    /* sort */
     this.getLocalStorageSort();
-
-    /* init */
-    this.constructTable();
     this.getLocalStorageHideColumnSettings();
     this.getLocalStorageColumnsSize();
-    this.setTableSize();
+
+    this.initDataTable();
     this.initNewItem();
+
+    this.setTableSize();
   },
   methods: {
-    /* */
-    constructTable() {
+    /* for data */
+    initDataTable() {
       if (this.dataUrl) {
-        console.log("todo get data with sort");
+        this.getServerData();
       } else {
-        // sortData
         this.rows = this.tableData;
         this.localSortData();
       }
+    },
+    getServerData() {
+      axios
+        .request({
+          method: "GET",
+          url: this.dataUrl,
+        })
+        .then((response) => {
+          this.rows = response.data;
+        })
+        .catch((error) => {
+          console.error(error);
+        });
     },
 
     /* for grid */

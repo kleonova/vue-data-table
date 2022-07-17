@@ -1,18 +1,15 @@
 <template>
-  <div v-if="isLoading">
-    <data-table
-      :table-id="tableId"
-      :table-constructor="tableConstructor"
-      :table-data="cats"
-      prefix-for-entity-dialog="породу"
-      editable
-      show-filter
-    />
-  </div>
+  <data-table
+    :table-id="tableId"
+    :table-constructor="tableConstructor"
+    data-url="https://api.thecatapi.com/v1/breeds"
+    prefix-for-entity-dialog="породу"
+    editable
+    show-filter
+  />
 </template>
 
 <script>
-import catApi from "@/services/cats.api";
 import DataTable from "@/components/data-table/DataTable";
 
 export default {
@@ -22,7 +19,6 @@ export default {
   },
   data() {
     return {
-      isLoading: false,
       tableId: "table-cats",
       tableConstructor: [
         {
@@ -93,20 +89,5 @@ export default {
       cats: [],
     };
   },
-  mounted() {
-    catApi
-      .getBreeds()
-      .then((response) => {
-        this.cats = response.data;
-      })
-      .catch((error) => {
-        console.error(error);
-      })
-      .finally(() => {
-        this.isLoading = true;
-      });
-  },
 };
 </script>
-
-<style scoped></style>
