@@ -19,7 +19,13 @@
           </th>
 
           <th v-if="editable">
-            <button v-if="!showFormAdd" @click="showFormAdd = true">add</button>
+            <button
+              v-if="!showFormAdd"
+              @click="showFormAdd = true"
+              title="Добавить"
+            >
+              <icon-plus />
+            </button>
           </th>
         </tr>
       </thead>
@@ -52,8 +58,9 @@
 <script>
 import DataTableFilter from "@/components/data-table/filter/DataTableFilter";
 import DataTableHeaderCell from "@/components/data-table/table/headerCells/DataTableHeaderCell";
-import { compareByOrder } from "@/utils/sortArray";
 import DataTableRow from "@/components/data-table/table/rows/DataTableRow";
+import IconPlus from "@/assets/icons/IconPlus";
+import { compareByOrder } from "@/utils/sortArray";
 
 export default {
   name: "DataTable",
@@ -61,6 +68,7 @@ export default {
     DataTableFilter,
     DataTableHeaderCell,
     DataTableRow,
+    IconPlus,
   },
   props: {
     tableId: {
@@ -283,7 +291,17 @@ export default {
   }
 
   td {
-    padding: 5px 3px;
+    padding: 8px 3px 5px;
+  }
+
+  button {
+    background-color: inherit;
+    border: none;
+    padding: 2px;
+    cursor: pointer;
+    width: 24px;
+    height: 24px;
+    color: #606060;
   }
 }
 </style>

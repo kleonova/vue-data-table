@@ -1,8 +1,5 @@
 <template>
-  <tr
-    class="data-table__row"
-    :class="{ 'data-table__row--editable': editMode }"
-  >
+  <tr :class="{ 'data-table-row--editable': editMode }">
     <td v-for="column in columns" :key="column.name">
       <template v-if="editMode">
         <input type="text" v-model="rowData[column.name]" />
@@ -11,22 +8,33 @@
       <template v-else>{{ row[column.name] }}</template>
     </td>
 
-    <td>
+    <td style="padding: 2px">
       <template v-if="editMode">
-        <button @click="onClickSave">save</button>
-        <button @click="onClickCancel">cancel</button>
+        <button @click="onClickSave" title="Сохранить"><icon-check /></button>
+        <button @click="onClickCancel" title="Отменить"><icon-cancel /></button>
       </template>
       <template v-else>
-        <button @click="onClickEdit">edit</button>
-        <button @click="onClickDelete">del</button>
+        <button @click="onClickEdit" title="Изменить"><icon-edit /></button>
+        <button @click="onClickDelete" title="Удалить"><icon-trash /></button>
       </template>
     </td>
   </tr>
 </template>
 
 <script>
+import IconEdit from "@/assets/icons/IconEdit";
+import IconTrash from "@/assets/icons/IconTrash";
+import IconCancel from "@/assets/icons/IconCancel";
+import IconCheck from "@/assets/icons/IconCheck";
+
 export default {
   name: "DataTableRow",
+  components: {
+    IconEdit,
+    IconTrash,
+    IconCancel,
+    IconCheck,
+  },
   props: {
     columns: {
       type: Array,
@@ -76,9 +84,9 @@ export default {
 </script>
 
 <style lang="scss">
-.data-table__row--editable {
+.data-table-row--editable {
   td {
-    background-color: aquamarine;
+    background-color: lightgray;
   }
 }
 </style>
