@@ -32,11 +32,13 @@ export default {
           name: "name",
           label: "name",
           hide: false,
+          minSize: 100,
         },
         {
           name: "temperament",
           label: "temperament",
           hide: true,
+          maxFrame: 2,
         },
         {
           name: "origin",
@@ -62,16 +64,19 @@ export default {
           name: "indoor",
           label: "indoor",
           hide: false,
+          size: 74,
         },
         {
           name: "lap",
           label: "lap",
           hide: false,
+          size: 74,
         },
         {
           name: "alt_names",
           label: "alt_names",
-          hide: true,
+          hide: false,
+          maxFrame: 2,
         },
       ],
       defaultSort: {

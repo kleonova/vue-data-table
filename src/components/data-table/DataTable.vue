@@ -14,6 +14,7 @@
               :sort-column="sort.column"
               :sort-order="sort.order"
               @sort:change="onChangeSort"
+              @size:change="handlerChangeSizeColumn"
             />
           </th>
 
@@ -128,6 +129,7 @@ export default {
 
     /* init */
     this.constructTable();
+    this.setTableSize();
     this.initNewItem();
   },
   methods: {
@@ -145,6 +147,28 @@ export default {
         this.localSortData();
       }
     },
+
+    /* grid */
+    setTableSize() {
+      const tableElement = document.getElementById(this.tableId);
+
+      let tableGridStyle = this.columns
+        .map(({ size, minSize = 50, maxFrame = 1 }) => {
+          return size ? `${size}px` : `minmax(${minSize}px, ${maxFrame}fr)`;
+        })
+        .join(" ");
+
+      if (this.editable) {
+        tableGridStyle += " 72px";
+      }
+
+      tableElement.style.gridTemplateColumns = tableGridStyle;
+    },
+    handlerChangeSizeColumn(column, newWidth) {
+      column.size = newWidth;
+      this.setTableSize();
+    },
+
     /* for sort */
     getLocalStorageSort() {
       const nameLocalStorage = this.tableId + "-sort";
@@ -239,17 +263,26 @@ export default {
 }
 
 .data-table {
-  text-align: left;
+  display: grid;
   border-collapse: collapse;
+  min-width: 100%;
+
+  thead,
+  tbody,
+  tr {
+    display: contents;
+  }
 
   th,
   td {
     border-collapse: collapse;
     border-bottom: 1px solid #cccccc;
-
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  td {
     padding: 5px 3px;
   }
 }
