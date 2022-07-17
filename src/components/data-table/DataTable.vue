@@ -157,6 +157,7 @@ export default {
     /* init */
     this.constructTable();
     this.getLocalStorageHideColumnSettings();
+    this.getLocalStorageColumnsSize();
     this.setTableSize();
     this.initNewItem();
   },
@@ -191,6 +192,35 @@ export default {
     handlerChangeSizeColumn(column, newWidth) {
       column.size = newWidth;
       this.setTableSize();
+      this.setLocalStorageColumnsSize();
+    },
+    getLocalStorageColumnsSize() {
+      const nameLocalStorage = this.tableId + "-size-columns";
+      const sizeColumnSettings = JSON.parse(
+        localStorage.getItem(nameLocalStorage)
+      );
+
+      if (sizeColumnSettings) {
+        Object.entries(sizeColumnSettings).forEach(([key, value]) => {
+          const column = this.columns.find(({ name }) => {
+            return name === key;
+          });
+          column.size = value;
+        });
+      }
+    },
+    setLocalStorageColumnsSize() {
+      const nameLocalStorage = this.tableId + "-size-columns";
+      const sizeColumnSettings = {};
+
+      this.columns.forEach(({ name, size }) => {
+        sizeColumnSettings[name] = size;
+      });
+      //
+      localStorage.setItem(
+        nameLocalStorage,
+        JSON.stringify(sizeColumnSettings)
+      );
     },
 
     /* for settings */
