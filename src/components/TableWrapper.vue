@@ -27,11 +27,14 @@ export default {
           name: "id",
           label: "id",
           hide: false,
+          required: true,
+          size: 60,
         },
         {
           name: "name",
           label: "name",
           hide: false,
+          required: true,
           minSize: 100,
         },
         {
@@ -49,6 +52,7 @@ export default {
           name: "country_code",
           label: "country_code",
           hide: false,
+          size: 131,
         },
         {
           name: "description",

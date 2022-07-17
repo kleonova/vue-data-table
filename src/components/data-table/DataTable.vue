@@ -5,10 +5,24 @@
       @search:clear="onSearchClear"
     />
 
+    <div class="m-t-5 m-b-5">
+      настройки
+
+      <ul>
+        <li
+          v-for="column in columns"
+          :key="column.name"
+          @click="changeVisibleColumn(column)"
+        >
+          {{ column.name }} | {{ !column.hide }} | {{ column.size }}
+        </li>
+      </ul>
+    </div>
+
     <table :id="tableId" class="data-table m-t-5">
       <thead>
         <tr>
-          <th v-for="column in columns" :key="column.name">
+          <th v-for="column in visibleColumns" :key="column.name">
             <data-table-header-cell
               :column="column"
               :sort-column="sort.column"
@@ -33,7 +47,7 @@
       <tbody>
         <data-table-row
           v-if="showFormAdd"
-          :columns="columns"
+          :columns="visibleColumns"
           :row="newItem"
           editable
           add-mode
@@ -45,7 +59,7 @@
           v-for="row in filterRows"
           :key="row['id']"
           :row="row"
-          :columns="columns"
+          :columns="visibleColumns"
           :editable="editable"
           @row:delete="onDeleteRow(row.id)"
           @row:save="onUpdateRow"
@@ -107,7 +121,7 @@ export default {
   data() {
     return {
       /* init */
-      columns: [],
+      columns: [...this.tableConstructor],
       rows: [],
 
       /* sort */
@@ -130,6 +144,11 @@ export default {
         return item.name.toLowerCase().includes(this.filter);
       });
     },
+    visibleColumns() {
+      return this.columns.filter(({ hide }) => {
+        return !hide;
+      });
+    },
   },
   mounted() {
     /* sort */
@@ -143,10 +162,6 @@ export default {
   methods: {
     /* */
     constructTable() {
-      this.columns = this.tableConstructor.filter(({ hide }) => {
-        return !hide;
-      });
-
       if (this.dataUrl) {
         console.log("todo get data with sort");
       } else {
@@ -156,11 +171,11 @@ export default {
       }
     },
 
-    /* grid */
+    /* for grid */
     setTableSize() {
       const tableElement = document.getElementById(this.tableId);
 
-      let tableGridStyle = this.columns
+      let tableGridStyle = this.visibleColumns
         .map(({ size, minSize = 50, maxFrame = 1 }) => {
           return size ? `${size}px` : `minmax(${minSize}px, ${maxFrame}fr)`;
         })
@@ -175,6 +190,14 @@ export default {
     handlerChangeSizeColumn(column, newWidth) {
       column.size = newWidth;
       this.setTableSize();
+    },
+
+    /* for settings */
+    changeVisibleColumn(column) {
+      if (!column.required) {
+        column.hide = !column.hide;
+        this.setTableSize();
+      }
     },
 
     /* for sort */
