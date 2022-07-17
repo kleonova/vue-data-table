@@ -303,5 +303,17 @@ export default {
     height: 24px;
     color: #606060;
   }
+
+  input {
+    background-color: inherit;
+    outline: none;
+    border: none;
+    border-bottom: 1px transparent;
+    width: 100%;
+
+    &:focus {
+      border-bottom: 1px dashed;
+    }
+  }
 }
 </style>

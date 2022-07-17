@@ -86,7 +86,7 @@ export default {
 <style lang="scss">
 .data-table-row--editable {
   td {
-    background-color: lightgray;
+    background-color: #f0f0f0;
   }
 }
 </style>
