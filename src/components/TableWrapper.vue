@@ -4,7 +4,9 @@
       :table-id="tableId"
       :table-constructor="tableConstructor"
       :table-data="cats"
+      prefix-for-entity-dialog="породу"
       editable
+      show-filter
     />
   </div>
 </template>

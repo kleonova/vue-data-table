@@ -1,22 +1,35 @@
 <template>
   <div class="data-table-wrapper">
-    <data-table-filter
-      @search:change="onSearchChange"
-      @search:clear="onSearchClear"
-    />
+    <div class="d-flex">
+      <data-table-filter
+        v-if="showFilter"
+        class="flex-grow"
+        @search:change="onSearchChange"
+        @search:clear="onSearchClear"
+      />
 
-    <div class="m-t-5 m-b-5">
-      настройки
+      <button @click="showSettings = !showSettings" class="m-l-10">
+        Настройки
+      </button>
+    </div>
 
-      <ul>
-        <li
-          v-for="column in columns"
-          :key="column.name"
-          @click="changeVisibleColumn(column)"
-        >
-          {{ column.name }} | {{ !column.hide }} | {{ column.size }}
-        </li>
-      </ul>
+    <div class="m-t-5 m-b-5" v-if="showSettings">
+      <h3>Настройка столбцов</h3>
+
+      <div class="d-flex">
+        <div v-for="column in columns" :key="column.name" class="m-r-10">
+          <label>
+            <input
+              type="checkbox"
+              :checked="!column.hide"
+              :disabled="column.required"
+              @click="changeVisibleColumn(column)"
+            />
+
+            {{ column.name }}
+          </label>
+        </div>
+      </div>
     </div>
 
     <table :id="tableId" class="data-table m-t-5">
@@ -57,10 +70,14 @@
 
         <data-table-row
           v-for="row in filterRows"
-          :key="row['id']"
+          v-bind="{
+            editable,
+            prefixForEntityDialog,
+            columnNameForEntityDialog,
+          }"
+          :key="row.id"
           :row="row"
           :columns="visibleColumns"
-          :editable="editable"
           @row:delete="onDeleteRow(row.id)"
           @row:save="onUpdateRow"
         />
@@ -89,6 +106,7 @@ export default {
       type: String,
       required: true,
     },
+    /* описание вывода и корректировки */
     tableConstructor: {
       type: Array,
       required: true,
@@ -101,6 +119,7 @@ export default {
       type: [String, Boolean],
       default: false,
     },
+    /* определяет будет ли при изменении фильтра или сортировки уходить запрос на перепостроение данных */
     serverRender: {
       type: Boolean,
       default: false,
@@ -116,11 +135,24 @@ export default {
       type: Boolean,
       default: false,
     },
+    showFilter: {
+      type: Boolean,
+      default: false,
+    },
+    /* определяют текст для диалоговых окон */
+    prefixForEntityDialog: {
+      type: String,
+      default: "запись",
+    },
+    columnNameForEntityDialog: {
+      type: String,
+      default: "name",
+    },
   },
   emits: ["row:create", "row:update", "row:delete"],
   data() {
     return {
-      /* init */
+      /* base */
       columns: [...this.tableConstructor],
       rows: [],
 
@@ -133,6 +165,9 @@ export default {
       /* crud */
       showFormAdd: false,
       newItem: {},
+
+      /* settings */
+      showSettings: false,
     };
   },
   computed: {

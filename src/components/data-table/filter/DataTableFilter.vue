@@ -1,8 +1,6 @@
 <template>
   <div class="data-table-filter">
-    <div>
-      <input v-model="search" type="text" placeholder="Поиск..." />
-    </div>
+    <input v-model="search" type="text" placeholder="Поиск..." />
     <button @click="onSearch">Найти</button>
     <button v-if="search" @click="onClear">Очистить</button>
   </div>
@@ -63,5 +61,9 @@ export default {
 <style lang="scss" scoped>
 .data-table-filter {
   display: flex;
+
+  input {
+    width: 100%;
+  }
 }
 </style>

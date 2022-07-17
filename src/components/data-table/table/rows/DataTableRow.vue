@@ -54,6 +54,15 @@ export default {
       type: Boolean,
       default: false,
     },
+    /* определяют текст для диалоговых окон */
+    prefixForEntityDialog: {
+      type: String,
+      default: "запись",
+    },
+    columnNameForEntityDialog: {
+      type: String,
+      default: "name",
+    },
   },
   emits: ["row:cancel", "row:save", "row:delete"],
   data() {
@@ -67,7 +76,10 @@ export default {
       this.editMode = true;
     },
     onClickDelete() {
-      if (confirm("Удалить?") == true) {
+      const textDialog = `Удалить ${this.prefixForEntityDialog} "${
+        this.rowData[this.columnNameForEntityDialog]
+      }"?`;
+      if (confirm(textDialog)) {
         this.$emit("row:delete");
       }
     },
