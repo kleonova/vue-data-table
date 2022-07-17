@@ -5,7 +5,7 @@
       @search:clear="onSearchClear"
     />
 
-    <table :id="tableId" class="data-table">
+    <table :id="tableId" class="data-table m-t-5">
       <thead>
         <tr>
           <th v-for="column in columns" :key="column.name">
@@ -239,15 +239,18 @@ export default {
 }
 
 .data-table {
-  font-size: 13px;
   text-align: left;
+  border-collapse: collapse;
 
   th,
   td {
-    border: 1px solid;
+    border-collapse: collapse;
+    border-bottom: 1px solid #cccccc;
+
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    padding: 5px 3px;
   }
 }
 </style>

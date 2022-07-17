@@ -1,15 +1,21 @@
 <template>
   <div class="data-table-header-cell">
     <div class="data-table-header-cell__sort" @click="onClickSort">
-      {{ column.label }} | {{ sortIcon }}
+      <span>{{ column.label }}</span>
+      <icon-sort :asc="showAsc" :desc="showDesc" class="m-l-5" />
     </div>
     resize
   </div>
 </template>
 
 <script>
+import IconSort from "@/assets/icons/IconSort";
+
 export default {
   name: "DataTableHeaderCell",
+  components: {
+    IconSort,
+  },
   props: {
     column: {
       type: Object,
@@ -29,12 +35,11 @@ export default {
   },
   emits: ["sort:change"],
   computed: {
-    sortIcon() {
-      return this.column.name === this.sortColumn
-        ? this.sortOrder === "desc"
-          ? "desc"
-          : "asc"
-        : "none";
+    showAsc() {
+      return this.column.name === this.sortColumn && this.sortOrder === "asc";
+    },
+    showDesc() {
+      return this.column.name === this.sortColumn && this.sortOrder === "desc";
     },
   },
   methods: {
@@ -61,6 +66,8 @@ export default {
   font-weight: normal;
 
   &__sort {
+    display: flex;
+    align-items: center;
     cursor: pointer;
   }
 }
