@@ -156,6 +156,7 @@ export default {
 
     /* init */
     this.constructTable();
+    this.getLocalStorageHideColumnSettings();
     this.setTableSize();
     this.initNewItem();
   },
@@ -193,10 +194,39 @@ export default {
     },
 
     /* for settings */
+    getLocalStorageHideColumnSettings() {
+      const nameLocalStorage = this.tableId + "-hide-columns";
+      const hideColumnSettings = JSON.parse(
+        localStorage.getItem(nameLocalStorage)
+      );
+
+      if (hideColumnSettings) {
+        Object.entries(hideColumnSettings).forEach(([key, value]) => {
+          const column = this.columns.find(({ name }) => {
+            return name === key;
+          });
+          column.hide = value;
+        });
+      }
+    },
+    setLocalStorageHideColumnSettings() {
+      const nameLocalStorage = this.tableId + "-hide-columns";
+      const hideColumnSettings = {};
+      //
+      this.columns.forEach(({ name, hide }) => {
+        hideColumnSettings[name] = hide;
+      });
+      //
+      localStorage.setItem(
+        nameLocalStorage,
+        JSON.stringify(hideColumnSettings)
+      );
+    },
     changeVisibleColumn(column) {
       if (!column.required) {
         column.hide = !column.hide;
         this.setTableSize();
+        this.setLocalStorageHideColumnSettings();
       }
     },
 
